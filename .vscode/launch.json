@@ -10,6 +10,13 @@
       "request": "launch",
       "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
       "projectName": "learn-spring-cloud-user-service"
+    },
+    {
+      "type": "java",
+      "name": "LearnSpringCloudUserServiceApplication1",
+      "request": "launch",
+      "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
+      "projectName": "learn-spring-cloud-user-service"
     }
   ]
 }
