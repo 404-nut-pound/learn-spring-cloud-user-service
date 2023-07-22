@@ -10,7 +10,7 @@
       "request": "launch",
       "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
       "projectName": "learn-spring-cloud-user-service",
-      "args": "--server.port=8081 --spring.application.name=user-service-1"
+      "args": "--spring.application.name=user-service-1"
     },
     {
       "type": "java",
@@ -18,7 +18,7 @@
       "request": "launch",
       "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
       "projectName": "learn-spring-cloud-user-service",
-      "args": "--server.port=8082 --spring.application.name=user-service-2"
+      "args": "--spring.application.name=user-service-2"
     }
   ]
 }
