@@ -6,17 +6,33 @@
   "configurations": [
     {
       "type": "java",
-      "name": "LearnSpringCloudUserServiceApplication",
+      "name": "LearnSpringCloudUserServiceApplication1",
       "request": "launch",
       "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
       "projectName": "learn-spring-cloud-user-service"
     },
     {
       "type": "java",
-      "name": "LearnSpringCloudUserServiceApplication1",
+      "name": "LearnSpringCloudUserServiceApplication2",
       "request": "launch",
       "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
       "projectName": "learn-spring-cloud-user-service"
+    },
+    {
+      "type": "java",
+      "name": "UserServiceGateway1",
+      "request": "launch",
+      "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
+      "projectName": "learn-spring-cloud-user-service",
+      "args": "--server.port=8081 --eureka.client.fetch-registry=false --eureka.client.register-with-eureka=false"
+    },
+    {
+      "type": "java",
+      "name": "UserServiceGateway2",
+      "request": "launch",
+      "mainClass": "io.hskim.learnspringclouduserservice.LearnSpringCloudUserServiceApplication",
+      "projectName": "learn-spring-cloud-user-service",
+      "args": "--server.port=8082 --eureka.client.fetch-registry=false --eureka.client.register-with-eureka=false"
     }
   ]
 }
