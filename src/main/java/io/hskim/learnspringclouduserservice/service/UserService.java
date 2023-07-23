@@ -2,11 +2,18 @@ package io.hskim.learnspringclouduserservice.service;
 
 import io.hskim.learnspringclouduserservice.dto.UserDto.UserRequestDto;
 import io.hskim.learnspringclouduserservice.dto.UserDto.UserResponseDto;
+import io.hskim.learnspringclouduserservice.dto.UserDto.UserSearchDto;
 import io.hskim.learnspringclouduserservice.entity.UserEntity;
 import io.hskim.learnspringclouduserservice.repo.UserRepo;
+import jakarta.ws.rs.NotFoundException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,5 +52,33 @@ public class UserService {
           .build()
       )
       .toDto();
+  }
+
+  public Page<UserResponseDto> getUserList(
+    UserSearchDto userSearchDto,
+    Pageable pageable
+  ) {
+    return userRepo
+      .findAll(
+        Example.of(
+          UserEntity
+            .builder()
+            .email(userSearchDto.getEmail())
+            .userName(userSearchDto.getUserName())
+            .build(),
+          ExampleMatcher
+            .matchingAny()
+            .withMatcher("email", matcher -> matcher.contains())
+            .withMatcher("userName", matcher -> matcher.contains())
+        ),
+        pageable
+      )
+      .map(UserEntity::toDto);
+  }
+
+  public UserEntity getUserEntity(String userId) {
+    return userRepo
+      .findById(UUID.fromString(userId))
+      .orElseThrow(() -> new NotFoundException());
   }
 }

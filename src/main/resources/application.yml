@@ -13,6 +13,22 @@ spring:
     console:
       settings:
         web-allow-others: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        '[show_sql]': true
+        '[format_sql]': true
+        '[default_batch_fetch_size]': 16
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
 
 eureka:
   client:

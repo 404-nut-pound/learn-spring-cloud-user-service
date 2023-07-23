@@ -20,6 +20,22 @@ public class UserDto {
   @Builder
   @ToString
   @EqualsAndHashCode
+  public static class UserSearchDto {
+
+    @Builder.Default
+    private String userName = "";
+
+    @Builder.Default
+    private String email = "";
+  }
+
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  @ToString
+  @EqualsAndHashCode
   public static class UserRequestDto {
 
     @NotBlank(groups = { ValidatedPatchGroup.class })
