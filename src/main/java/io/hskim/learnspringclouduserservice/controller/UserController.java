@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/{serviceType}/user")
+@RequestMapping(value = "/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -25,21 +25,15 @@ public class UserController {
 
   @PostMapping
   public UserResponseDto postUser(
-    @PathVariable String serviceType,
     @Validated(
       value = { ValidatedPostGroup.class }
     ) @RequestBody UserRequestDto userRequestDto
   ) {
-    userRequestDto.setUserName(
-      "%s-%s".formatted(serviceType, userRequestDto.getUserName())
-    );
-
     return userService.postUser(userRequestDto);
   }
 
   @GetMapping
   public Page<UserResponseDto> getUserList(
-    @PathVariable String serviceType,
     UserSearchDto userSearchDto,
     Pageable pageable
   ) {
@@ -47,10 +41,7 @@ public class UserController {
   }
 
   @GetMapping(value = "/{userId}")
-  public UserResponseDto getUser(
-    @PathVariable String serviceType,
-    @PathVariable String userId
-  ) {
+  public UserResponseDto getUser(@PathVariable String userId) {
     return userService.getUserEntity(userId).toDto();
   }
 }
