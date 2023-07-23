@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
+
+  private final BCryptPasswordEncoder passwordEncoder;
 
   private final UserRepo userRepo;
 
@@ -38,7 +41,7 @@ public class UserService {
           .builder()
           .email(userRequestDto.getEmail())
           .userName(userRequestDto.getUserName())
-          .password("tempValue")
+          .password(passwordEncoder.encode(userRequestDto.getPassword()))
           .build()
       )
       .toDto();
