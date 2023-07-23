@@ -6,6 +6,7 @@ import io.hskim.learnspringclouduserservice.dto.UserDto.UserSearchDto;
 import io.hskim.learnspringclouduserservice.entity.UserEntity;
 import io.hskim.learnspringclouduserservice.repo.UserRepo;
 import jakarta.ws.rs.NotFoundException;
+import java.util.ArrayList;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,6 +15,10 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
   private final BCryptPasswordEncoder passwordEncoder;
 
@@ -77,5 +82,23 @@ public class UserService {
     return userRepo
       .findById(UUID.fromString(userId))
       .orElseThrow(() -> new NotFoundException());
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username)
+    throws UsernameNotFoundException {
+    UserEntity findUserEntity = userRepo
+      .findByEmail(username)
+      .orElseThrow(() -> new UsernameNotFoundException(username));
+
+    return new User(
+      username,
+      findUserEntity.getPassword(),
+      true,
+      true,
+      true,
+      true,
+      new ArrayList<>()
+    );
   }
 }

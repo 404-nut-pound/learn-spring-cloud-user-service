@@ -1,17 +1,23 @@
 package io.hskim.learnspringclouduserservice.config;
 
+import io.hskim.learnspringclouduserservice.config.security.AuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+  private AuthenticationManager authenticationManager;
 
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -19,17 +25,27 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(
-    HttpSecurity httpSecurity,
-    HandlerMappingIntrospector handlerMappingIntrospector
+  public AuthenticationManager authenticationManager(
+    AuthenticationConfiguration authenticationConfiguration
   ) throws Exception {
+    authenticationManager =
+      authenticationConfiguration.getAuthenticationManager();
+
+    return authenticationManager;
+  }
+
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)
+    throws Exception {
     return httpSecurity
       .authorizeHttpRequests(request ->
         request
           .requestMatchers(PathRequest.toH2Console())
           .permitAll()
           .anyRequest()
-          .permitAll()
+          .authenticated()
+          .and()
+          .addFilter(new AuthenticationFilter(authenticationManager))
       )
       .csrf(csrf -> csrf.disable())
       .headers(headers -> headers.frameOptions().disable())
