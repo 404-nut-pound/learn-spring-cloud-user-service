@@ -1,4 +1,4 @@
-package io.hskim.learnspringclouduserservice;
+package io.hskim.learnspringclouduserservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+public class CommonController {
 
   private final Environment env;
 
