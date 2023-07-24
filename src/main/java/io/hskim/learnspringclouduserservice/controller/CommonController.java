@@ -23,9 +23,9 @@ public class CommonController {
       value = "gateway-request",
       required = false,
       defaultValue = "'gateway-request' header not-provided"
-    ) String requestHeader
+    ) String gatewayRequestHeader
   ) {
-    return requestHeader;
+    return gatewayRequestHeader;
   }
 
   @GetMapping(value = "/check")
