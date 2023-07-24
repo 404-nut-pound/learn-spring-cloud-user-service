@@ -1,6 +1,7 @@
 package io.hskim.learnspringclouduserservice.config;
 
 import io.hskim.learnspringclouduserservice.config.security.AuthenticationFilter;
+import io.hskim.learnspringclouduserservice.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+  private final UserRepo userRepo;
 
   private AuthenticationManager authenticationManager;
 
@@ -45,7 +48,7 @@ public class SecurityConfig {
           .anyRequest()
           .permitAll()
           .and()
-          .addFilter(new AuthenticationFilter(authenticationManager))
+          .addFilter(new AuthenticationFilter(authenticationManager, userRepo))
       )
       .csrf(csrf -> csrf.disable())
       .headers(headers -> headers.frameOptions().disable())
