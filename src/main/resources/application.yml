@@ -21,11 +21,11 @@ spring:
         '[show_sql]': false
         '[format_sql]': false
         '[default_batch_fetch_size]': 16
+  config:
+    import: optional:configserver:http://localhost:8888
   cloud:
     config:
       name: ecommerce
-  config:
-    import: optional:configserver:http://localhost:8888
 
 eureka:
   client:
