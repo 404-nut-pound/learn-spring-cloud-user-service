@@ -43,7 +43,7 @@ public class SecurityConfig {
           .requestMatchers(PathRequest.toH2Console())
           .permitAll()
           .anyRequest()
-          .authenticated()
+          .permitAll()
           .and()
           .addFilter(new AuthenticationFilter(authenticationManager))
       )
