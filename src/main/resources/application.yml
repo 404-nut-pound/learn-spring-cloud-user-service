@@ -26,6 +26,8 @@ spring:
   cloud:
     config:
       name: ecommerce
+    refresh:
+      extra-refreshable: com.zaxxer.hikari.HikariDataSource
   rabbitmq:
     host: localhost
     port: 5672
