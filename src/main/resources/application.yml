@@ -38,3 +38,9 @@ eureka:
 # jwt:
 #   expire-hours: 24
 #   secret-key: asdf
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans
