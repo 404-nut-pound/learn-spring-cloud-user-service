@@ -4,11 +4,11 @@ server:
 spring:
   application:
     name: user-service
-  datasource:
-    url: jdbc:h2:mem:demo #메모리 기반
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+  # datasource: # Spring Cloud Config에서 값을 받아옮
+  #   url: jdbc:h2:mem:demo #메모리 기반
+  #   username: sa
+  #   password:
+  #   driver-class-name: org.h2.Driver
   h2:
     console:
       settings:
@@ -25,7 +25,7 @@ spring:
     import: optional:configserver:http://localhost:8888
   cloud:
     config:
-      name: ecommerce
+      name: user-service
     refresh:
       extra-refreshable: com.zaxxer.hikari.HikariDataSource
   rabbitmq:
