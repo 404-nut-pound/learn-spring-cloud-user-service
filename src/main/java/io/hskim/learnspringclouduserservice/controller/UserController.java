@@ -42,6 +42,6 @@ public class UserController {
 
   @GetMapping(value = "/{userId}")
   public UserResponseDto getUser(@PathVariable String userId) {
-    return userService.getUserEntity(userId).toDto();
+    return userService.getUserDto(userId);
   }
 }
