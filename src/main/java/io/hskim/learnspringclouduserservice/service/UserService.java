@@ -1,8 +1,6 @@
 package io.hskim.learnspringclouduserservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.hskim.learnspringclouduserservice.client.OrderServiceClient;
 import io.hskim.learnspringclouduserservice.dto.OrderDto;
 import io.hskim.learnspringclouduserservice.dto.UserDto.UserRequestDto;
 import io.hskim.learnspringclouduserservice.dto.UserDto.UserResponseDto;
@@ -11,20 +9,15 @@ import io.hskim.learnspringclouduserservice.entity.UserEntity;
 import io.hskim.learnspringclouduserservice.repo.UserRepo;
 import jakarta.ws.rs.NotFoundException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,7 +25,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional
@@ -42,7 +34,9 @@ public class UserService implements UserDetailsService {
   @Value("${order-service.url}")
   private String orderServiceUrl;
 
-  private final RestTemplate restTemplate;
+  // private final RestTemplate restTemplate;
+
+  private final OrderServiceClient orderServiceClient;
 
   private final BCryptPasswordEncoder passwordEncoder;
 
@@ -100,34 +94,40 @@ public class UserService implements UserDetailsService {
       .orElseThrow(() -> new NotFoundException())
       .toDto();
 
-    ResponseEntity<String> response = restTemplate.exchange(
-      "%s/order/%s/orders".formatted(orderServiceUrl, userId),
-      HttpMethod.GET,
-      null,
-      new ParameterizedTypeReference<String>() {}
-    );
+    // 로드 밸런서를 통한 REST API 연결
+    // ResponseEntity<String> response = restTemplate.exchange(
+    //   "%s/order/%s/orders".formatted(orderServiceUrl, userId),
+    //   HttpMethod.GET,
+    //   null,
+    //   new ParameterizedTypeReference<String>() {}
+    // );
 
-    if (response.getStatusCode().is2xxSuccessful()) {
-      JsonMapper jsonMapper = JsonMapper.builder().build();
+    // if (response.getStatusCode().is2xxSuccessful()) {
+    //   JsonMapper jsonMapper = JsonMapper.builder().build();
 
-      try {
-        Map<String, Object> firstMap = jsonMapper.readValue(
-          response.getBody(),
-          new TypeReference<Map<String, Object>>() {}
-        );
+    //   try {
+    //     Map<String, Object> firstMap = jsonMapper.readValue(
+    //       response.getBody(),
+    //       new TypeReference<Map<String, Object>>() {}
+    //     );
 
-        if (firstMap.containsKey("content")) {
-          List<OrderDto> orderList = jsonMapper.readValue(
-            jsonMapper.writeValueAsString(firstMap.get("content")),
-            new TypeReference<List<OrderDto>>() {}
-          );
+    //     if (firstMap.containsKey("content")) {
+    //       List<OrderDto> orderList = jsonMapper.readValue(
+    //         jsonMapper.writeValueAsString(firstMap.get("content")),
+    //         new TypeReference<List<OrderDto>>() {}
+    //       );
 
-          findUserResponseDto.setOrderList(orderList);
-        }
-      } catch (JsonProcessingException e) {
-        e.printStackTrace();
-      }
-    }
+    //       findUserResponseDto.setOrderList(orderList);
+    //     }
+    //   } catch (JsonProcessingException e) {
+    //     e.printStackTrace();
+    //   }
+    // }
+
+    // FeignClient를 통한 REST API 연결
+    Page<OrderDto> orderList = orderServiceClient.getOrderList(userId);
+
+    findUserResponseDto.setOrderList(orderList.getContent());
 
     return findUserResponseDto;
   }
