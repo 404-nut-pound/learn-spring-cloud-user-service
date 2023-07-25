@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(value = "order-service-1")
 public interface OrderServiceClient {
-  @GetMapping(value = "/order/{userId}/orders")
+  @GetMapping(value = "/order/{userId}/orders-ng")
   Page<OrderDto> getOrderList(@PathVariable(value = "userId") String userId);
 }
