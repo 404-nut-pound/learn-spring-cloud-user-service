@@ -17,6 +17,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -37,6 +38,11 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
+
+  @Value("${order-service.url}")
+  private String orderServiceUrl;
+
+  private final RestTemplate restTemplate;
 
   private final BCryptPasswordEncoder passwordEncoder;
 
@@ -94,13 +100,12 @@ public class UserService implements UserDetailsService {
       .orElseThrow(() -> new NotFoundException())
       .toDto();
 
-    ResponseEntity<String> response = new RestTemplate()
-      .exchange(
-        "http://localhost:8080/order-service/order/%s/orders".formatted(userId),
-        HttpMethod.GET,
-        null,
-        new ParameterizedTypeReference<String>() {}
-      );
+    ResponseEntity<String> response = restTemplate.exchange(
+      "%s/order/%s/orders".formatted(orderServiceUrl, userId),
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<String>() {}
+    );
 
     if (response.getStatusCode().is2xxSuccessful()) {
       JsonMapper jsonMapper = JsonMapper.builder().build();
