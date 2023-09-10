@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,8 @@ public class UserService implements UserDetailsService {
   private final BCryptPasswordEncoder passwordEncoder;
 
   private final UserRepo userRepo;
+
+  private final CircuitBreakerFactory circuitBreakerFactory;
 
   public UserResponseDto postUser(UserRequestDto userRequestDto) {
     ModelMapper modelMapper = new ModelMapper();
@@ -125,9 +128,23 @@ public class UserService implements UserDetailsService {
     // }
 
     // FeignClient를 통한 REST API 연결
-    Page<OrderDto> orderList = orderServiceClient.getOrderList(userId);
+    // Page<OrderDto> orderList = orderServiceClient.getOrderList(userId);
 
-    findUserResponseDto.setOrderList(orderList.getContent());
+    // CircuitBreaker 처리
+    org.springframework.cloud.client.circuitbreaker.CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+      "circuitBreaker"
+    );
+
+    Page<OrderDto> orderList = circuitBreaker.run(
+      () -> orderServiceClient.getOrderList(userId),
+      throwable -> null
+    );
+
+    if (orderList != null) {
+      findUserResponseDto.setOrderList(orderList.getContent());
+    } else {
+      findUserResponseDto.setOrderList(new ArrayList<>());
+    }
 
     return findUserResponseDto;
   }
