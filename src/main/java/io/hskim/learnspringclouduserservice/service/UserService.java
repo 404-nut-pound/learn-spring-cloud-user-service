@@ -11,6 +11,7 @@ import jakarta.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements UserDetailsService {
 
   @Value("${order-service.url}")
@@ -127,6 +129,7 @@ public class UserService implements UserDetailsService {
     //   }
     // }
 
+    log.info("Before call order service.");
     // FeignClient를 통한 REST API 연결
     // Page<OrderDto> orderList = orderServiceClient.getOrderList(userId);
 
@@ -139,6 +142,7 @@ public class UserService implements UserDetailsService {
       () -> orderServiceClient.getOrderList(userId),
       throwable -> null
     );
+    log.info("After call order service.");
 
     if (orderList != null) {
       findUserResponseDto.setOrderList(orderList.getContent());
