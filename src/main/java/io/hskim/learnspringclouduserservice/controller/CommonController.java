@@ -1,5 +1,6 @@
 package io.hskim.learnspringclouduserservice.controller;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ public class CommonController {
   private final Environment env;
 
   @GetMapping
+  @Timed(value = "users.welcome", longTask = true)
   public String getWelcome() {
     return "Welcome to User Service!";
   }
@@ -28,6 +30,7 @@ public class CommonController {
     return gatewayRequestHeader;
   }
 
+  @Timed(value = "users.status", longTask = true)
   @GetMapping(value = "/check")
   public String getCheck() {
     return "Check Application %s:%s\ntoken expire hours: %s\ntoken secret-key: %s".formatted(
